@@ -1,7 +1,8 @@
 import {configureStore, createSlice} from "@reduxjs/toolkit";
 import {AppState} from "../model/AppState";
 const initialState: AppState = {
-  links: []
+  links: [],
+  categories: []
 };
 const state = createSlice({
   name: "state",
@@ -9,6 +10,9 @@ const state = createSlice({
   reducers: {
     setLinks(state, action) {
       state.links = action.payload;
+    },
+    setCategories(state, action) {
+      state.categories = action.payload;
     }
   }
 });

@@ -17,6 +17,8 @@ const AllEntries = () => {
             setBusy({state: true, message: "Loading weight entries from DB..."});
             const locLinksData: any = await linkService.getLinks();
             dispatch(stateActions.setLinks(locLinksData.data));
+            const locCategoriesData: any = await linkService.getCategories();
+            dispatch(stateActions.setCategories(locCategoriesData.data));
             setBusy({state: false, message: ""});
         })();
     }, [dispatch]);
