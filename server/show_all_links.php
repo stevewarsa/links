@@ -4,8 +4,6 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Cache-Control: post-check=0, pre-check=0', FALSE);
 header('Pragma: no-cache');
 
-include_once('./Link.php');
-
 $db = new SQLite3('db/links.sqlite');
 if (isset($_GET["cat"]) && $_GET["cat"] != null && $_GET["cat"] != "" && $_GET["cat"] != "all") {
 	$cat = $_GET["cat"];
@@ -17,7 +15,7 @@ if (isset($_GET["cat"]) && $_GET["cat"] != null && $_GET["cat"] != "" && $_GET["
 
 $links = array();
 while ($row = $results->fetchArray()) {
-    $link = new Link();
+    $link = new stdClass();
     $link->id = $row['id'];
     $link->date_time_link_saved = $row['date_time_link_saved'];
     $link->url = $row['url'];

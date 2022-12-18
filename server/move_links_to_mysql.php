@@ -1,9 +1,6 @@
 <?php
 
 include_once('./connect.php');
-include_once('./Link.php');
-
-include_once('./Passage.php');
 
 $db = new SQLite3('db/links.sqlite');
 $mysqldb = getConnection();
@@ -17,7 +14,7 @@ $statement = $mysqldb->prepare($sql);
 
 while ($row = $results->fetchArray()) {
 
-    $link = new Link();
+    $link = new stdClass();
 
     $link->date_time_link_saved = $row['date_time_link_saved'];
 

@@ -95,7 +95,7 @@ $links = array();
 
 while ($row = $results->fetchArray()) {
 
-    $link = new Link();
+    $link = new stdClass();
 
     $link->date_time_link_saved = $row['date_time_link_saved'];
 

@@ -1,5 +1,4 @@
 <?php
-include_once('./Link.php');
 $id = $_GET["id"];
 $db = new SQLite3('db/links.sqlite');
 $results = $db->query('select column_cd, column_tx from categories');
@@ -13,7 +12,7 @@ while ($row = $results->fetchArray()) {
 $results = $db->query("select id, date_time_link_saved, url, title, addlcomments, category, sent from links where id = '" . $id . "'");
 $link = null;
 while ($row = $results->fetchArray()) {
-    $link = new Link();
+    $link = new stdClass();
     $link->id = $row['id'];
     $link->date_time_link_saved = $row['date_time_link_saved'];
     $link->url = $row['url'];
