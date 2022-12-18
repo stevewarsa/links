@@ -21,6 +21,8 @@ const AllEntries = () => {
     const [currPageLinks, setCurrPageLinks] = useState<Link[]>([]);
     const [currPageStartIndex, setCurrPageStartIndex] = useState(1);
     const [filteredLinks, setFilteredLinks] = useState<Link[]>([]);
+    const [selectedCat, setSelectedCat] = useState<string>("");
+    const [sentVal, setSentVal] = useState("All");
 
     useEffect(() => {
         (async () => {
@@ -38,7 +40,7 @@ const AllEntries = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (!filteredLinks || filteredLinks.length === 0) {
+        if (!filteredLinks) {
             return;
         }
         // purpose here is to set the 5 links for the current page (e.g. page=1 should show links 0-4, page=2 should show 5-9, page=3 show 10-14 etc)
@@ -70,52 +72,88 @@ const AllEntries = () => {
         setPage(pageLen - 1);
     };
 
+    const doFilter = (selectedCat: string, sent: string) => {
+        let locFilteredLinks = links.filter(link => selectedCat.length === 0 || link.category === selectedCat);
+        if (selectedCat === "apologetics") {
+            console.log("doFilter - category is apologetics, filtering to sent value " + sent);
+            locFilteredLinks = locFilteredLinks.filter(link => sent === "All" || link.sent === sent);
+        }
+        const numPagesRounded = Math.round(locFilteredLinks.length / recsPerPage);
+        setPageLen(numPagesRounded + 1);
+        setPage(1);
+        setFilteredLinks(locFilteredLinks);
+    }
+
     const handleCatChange = (evt: any) => {
-        const selectedCat = evt.target.value;
-        console.log("handleCatChange - selectedCat=" + selectedCat);
-        if (!selectedCat || selectedCat.length === 0) {
+        const locSelectedCat: string = evt.target.value;
+        console.log("handleCatChange - selectedCat=" + locSelectedCat);
+        if (!locSelectedCat || locSelectedCat.length === 0) {
             const numPagesRounded = Math.round(links.length / recsPerPage);
             setPageLen(numPagesRounded + 1);
             setPage(1);
             setFilteredLinks(links);
+            setSelectedCat("");
         } else {
-            const locFilteredLinks = links.filter(link => link.category === selectedCat);
-            const numPagesRounded = Math.round(locFilteredLinks.length / recsPerPage);
-            setPageLen(numPagesRounded + 1);
-            setPage(1);
-            setFilteredLinks(locFilteredLinks);
+            setSelectedCat(locSelectedCat);
+            doFilter(locSelectedCat, sentVal);
+        }
+    };
+
+    const handleSent = (evt: any, radioVal: string) => {
+        console.log("handleSent - here's the radioVal: ", radioVal);
+        console.log("handleSent - here's the event: ", evt);
+        const checked: boolean = evt.target.checked;
+        if (checked) {
+            setSentVal(radioVal);
+            console.log("handleSent - calling doFilter(" + selectedCat + ", " + radioVal + ")");
+            doFilter(selectedCat, radioVal);
         }
     };
 
     if (busy.state) {
         return <SpinnerTimer message={busy.message} />;
     } else {
-        if (currPageLinks && currPageLinks.length > 0 && categories && categories.length > 0) {
+        if (currPageLinks && categories && categories.length > 0) {
             return (
                 <Container className="mt-3">
+                    {currPageLinks.length > 0 &&
+                        <Row className="text-center mb-3">
+                            <Col>{currPageStartIndex + 1}-{currPageStartIndex + currPageLinks.length} of {filteredLinks.length}</Col>
+                        </Row>
+                    }
                     <Row className="text-center mb-3">
-                        <Col>{currPageStartIndex + 1}-{currPageStartIndex + currPageLinks.length} of {filteredLinks.length}</Col>
                         <Col>
                             <Form.Select aria-label="Category Selection" size="sm" onChange={handleCatChange}>
-                                <option></option>
+                                <option value=""></option>
                                 {categories.map(category => (
                                     <option key={category.categoryCd} value={category.categoryCd}>{category.categoryTx}</option>
                                 ))}
                             </Form.Select>
                         </Col>
-                    </Row>
-                    <Row className="text-center">
+                        {selectedCat && "apologetics" === selectedCat &&
                         <Col>
-                            <Pagination size="lg" className="justify-content-center">
-                                <Pagination.First onClick={handleFirstPage} />
-                                <Pagination.Prev onClick={handlePrevPage} />
-                                <Pagination.Item>{page}</Pagination.Item>
-                                <Pagination.Next onClick={handleNextPage} />
-                                <Pagination.Last onClick={handleLastPage} />
-                            </Pagination>
+                            <Form.Check checked={sentVal == "All"} onChange={(evt) => handleSent(evt, "All")} inline label="All" name="sent" type="radio" id="All" />
+                            <Form.Check checked={sentVal == "Y"} onChange={(evt) => handleSent(evt, "Y")} inline label="Y" name="sent" type="radio" id="Y" />
+                            <Form.Check checked={sentVal == "N"} onChange={(evt) => handleSent(evt, "N")} inline label="N" name="sent" type="radio" id="N" />
                         </Col>
+                        }
                     </Row>
-                    {currPageLinks.map(l => (
+                    {currPageLinks.length > 0 &&
+                        <Row className="text-center">
+                            <Col>
+                                <Pagination size="lg" className="justify-content-center">
+                                    <Pagination.First onClick={handleFirstPage} />
+                                    <Pagination.Prev onClick={handlePrevPage} />
+                                    <Pagination.Item disabled>{page}</Pagination.Item>
+                                    <Pagination.Next onClick={handleNextPage} />
+                                    <Pagination.Last onClick={handleLastPage} />
+                                </Pagination>
+                            </Col>
+                        </Row>
+                    }
+                    {currPageLinks.length === 0 && selectedCat === "apologetics" && sentVal === "N" && <h3>No links unsent for category Apologetics</h3>}
+                    {currPageLinks.length === 0 && selectedCat !== "apologetics" && <h3>No links for category '{selectedCat}'</h3>}
+                    {currPageLinks.length > 0 && currPageLinks.map(l => (
                         <Card key={l.date_time_link_saved + l.title} border="light">
                             <Card.Header>{categories.filter(cat => cat.categoryCd === l.category).map(cat => cat.categoryTx)}{l.category === "apologetics" ? " (Sent? " + l.sent + ")" : ""}</Card.Header>
                             <Card.Body>
@@ -128,17 +166,19 @@ const AllEntries = () => {
                             </Card.Body>
                         </Card>
                     ))}
-                    <Row className="text-center">
-                        <Col>
-                            <Pagination size="lg" className="justify-content-center">
-                                <Pagination.First onClick={handleFirstPage} />
-                                <Pagination.Prev onClick={handlePrevPage} />
-                                <Pagination.Item>{page}</Pagination.Item>
-                                <Pagination.Next onClick={handleNextPage} />
-                                <Pagination.Last onClick={handleLastPage} />
-                            </Pagination>
-                        </Col>
-                    </Row>
+                    {currPageLinks.length > 0 &&
+                        <Row className="text-center">
+                            <Col>
+                                <Pagination size="lg" className="justify-content-center">
+                                    <Pagination.First onClick={handleFirstPage} />
+                                    <Pagination.Prev onClick={handlePrevPage} />
+                                    <Pagination.Item disabled>{page}</Pagination.Item>
+                                    <Pagination.Next onClick={handleNextPage} />
+                                    <Pagination.Last onClick={handleLastPage} />
+                                </Pagination>
+                            </Col>
+                        </Row>
+                    }
                 </Container>
             );
         } else {
