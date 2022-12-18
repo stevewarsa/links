@@ -23,6 +23,7 @@ const AllEntries = () => {
     const [filteredLinks, setFilteredLinks] = useState<Link[]>([]);
     const [selectedCat, setSelectedCat] = useState<string>("");
     const [sentVal, setSentVal] = useState("All");
+    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         (async () => {
@@ -72,11 +73,18 @@ const AllEntries = () => {
         setPage(pageLen - 1);
     };
 
-    const doFilter = (selectedCat: string, sent: string) => {
-        let locFilteredLinks = links.filter(link => selectedCat.length === 0 || link.category === selectedCat);
-        if (selectedCat === "apologetics") {
+    const doFilter = (cat: string, sent: string, search: string) => {
+        let locFilteredLinks = links.filter(link => cat.length === 0 || link.category === cat);
+        if (cat === "apologetics") {
             console.log("doFilter - category is apologetics, filtering to sent value " + sent);
             locFilteredLinks = locFilteredLinks.filter(link => sent === "All" || link.sent === sent);
+        }
+        if (search !== "") {
+            console.log("doFilter - search string is " + search);
+            locFilteredLinks = locFilteredLinks.filter(link => {
+                const matches = link.title && link.title.toUpperCase().includes(search.toUpperCase());
+                return matches;
+            });
         }
         const numPagesRounded = Math.round(locFilteredLinks.length / recsPerPage);
         setPageLen(numPagesRounded + 1);
@@ -95,7 +103,7 @@ const AllEntries = () => {
             setSelectedCat("");
         } else {
             setSelectedCat(locSelectedCat);
-            doFilter(locSelectedCat, sentVal);
+            doFilter(locSelectedCat, sentVal, searchText);
         }
     };
 
@@ -106,8 +114,14 @@ const AllEntries = () => {
         if (checked) {
             setSentVal(radioVal);
             console.log("handleSent - calling doFilter(" + selectedCat + ", " + radioVal + ")");
-            doFilter(selectedCat, radioVal);
+            doFilter(selectedCat, radioVal, searchText);
         }
+    };
+
+    const handleSearchChange = (evt: any) => {
+        const locSearchText = evt.target.value.trim();
+        setSearchText(locSearchText);
+        doFilter(selectedCat, sentVal, locSearchText);
     };
 
     if (busy.state) {
@@ -138,6 +152,18 @@ const AllEntries = () => {
                         </Col>
                         }
                     </Row>
+                    {currPageLinks.length > 0 &&
+                        <Row className="text-center mb-3">
+                            <Col>
+                                <Form.Control
+                                    type="text"
+                                    id="searchText"
+                                    placeholder="Search Text"
+                                    onChange={handleSearchChange}
+                                />
+                            </Col>
+                        </Row>
+                    }
                     {currPageLinks.length > 0 &&
                         <Row className="text-center">
                             <Col>
