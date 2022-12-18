@@ -6,7 +6,7 @@ header('Pragma: no-cache');
 
 include_once('./Link.php');
 
-$db = new SQLite3('links.sqlite');
+$db = new SQLite3('db/links.sqlite');
 if (isset($_GET["cat"]) && $_GET["cat"] != null && $_GET["cat"] != "" && $_GET["cat"] != "all") {
 	$cat = $_GET["cat"];
 	$results = $db->query("select id, date_time_link_saved, url, title, addlcomments, category, sent from links where category = '" . $cat . "' order by date_time_link_saved desc");
@@ -92,7 +92,7 @@ if ($page == $pageCount) {
 			var typeAheadResults = document.getElementById("typeAheadResults");
 			if (currentSearchResult && currentSearchResult.length) {
 				var listOfLinks = "<ol>";
-				currentSearchResult.forEach(link => listOfLinks += "<li><a href=\"" + link.url + "\" target=\"_blank\">" + link.title + "</a> (" + link.category + ") <a href=\"/links/edit-saved-url.php?id=" + link.id + "\" target=\"_blank\">edit</a></li>");
+				currentSearchResult.forEach(link => listOfLinks += "<li><a href=\"" + link.url + "\" target=\"_blank\">" + link.title + "</a> (" + link.category + ") <a href=\"/links-app/server/edit-saved-url.php?id=" + link.id + "\" target=\"_blank\">edit</a></li>");
 				listOfLinks += "</ol>"
 				typeAheadResults.innerHTML = listOfLinks;
 				typeAheadResults.style.display = "block";
@@ -175,7 +175,7 @@ if ($page == $pageCount) {
 				<h6 class="card-subtitle mb-2 text-muted"><strong>Category:</strong> <?=$currLink->category?></h6>
 				<p class="card-text"><strong>Date/Time accessed:</strong> <?=$currLink->date_time_link_saved?></p>
 				<p class="card-text"><strong>Sent?</strong> <?=$currLink->sent?></p>
-				<a href="<?=$currLink->url?>" target="_blank" class="card-link">Open Link</a> <a href="/links/edit-saved-url.php?id=<?=$currLink->id?>" class="card-link text-success">Edit</a>
+				<a href="<?=$currLink->url?>" target="_blank" class="card-link">Open Link</a> <a href="/links-app/server/edit-saved-url.php?id=<?=$currLink->id?>" class="card-link text-success">Edit</a>
 			  </div>
 			</div>
 		<?php

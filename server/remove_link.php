@@ -1,12 +1,12 @@
 <?php
-error_log('Entering /links/remove_link.php...');
+error_log('Entering /links-app/server/remove_link.php...');
 $inputJSON = file_get_contents('php://input');
 error_log('[remove_link.php] Here is the incoming data: ' . $inputJSON);
 $incomingData = json_decode( $inputJSON );
 $succeededStr = "FALSE";
 try {
 	error_log('[remove_link.php] Creating SQLite database connection...');
-	$db = new SQLite3('links.sqlite');
+	$db = new SQLite3('db/links.sqlite');
 	error_log('[remove_link.php] SQLite database connection created');
 	error_log('[remove_link.php] preparing statement...');
 	$insertSql = "INSERT INTO random_link_domain_exceptions (domain) VALUES (:url)";

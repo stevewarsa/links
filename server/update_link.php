@@ -20,7 +20,7 @@ if ( isset($_POST["new_cat_tx"])) {
 if ($new_cat_tx == null || $new_cat_tx == "" || $new_cat_cd == null || $new_cat_cd == "") {
     $hasNewCat = FALSE;
 }
-$db = new SQLite3('links.sqlite');
+$db = new SQLite3('db/links.sqlite');
 if ($hasNewCat == TRUE) {
     $sql = "insert into categories(column_cd, column_tx) values (:column_cd, :column_tx)";
     $statement = $db->prepare($sql);
@@ -69,7 +69,7 @@ $db->close();
 		<b>Title:</b> <?=$title?> <br>
 		<b>Additional Comments:</b> <?=$addlcomments?> <br>
 		<b>Category:</b> <?=$categoryUsed?> <br>
-		<a href="/links/show_all_links.php">View All Links...</a>
+		<a href="/links-app/server/show_all_links.php">View All Links...</a>
 	</div>
 </body>
 </html>

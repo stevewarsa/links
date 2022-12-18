@@ -3,7 +3,7 @@
 
 include_once('./Link.php');
 
-$db = new SQLite3('links.sqlite');
+$db = new SQLite3('db/links.sqlite');
 
 //$results = $db->query("SELECT DISTINCT SUBSTR(url, 0, INSTR(url, '//') + 2) || REPLACE(SUBSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), 0, INSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), '/')), 'www.', '') AS DOMAIN, REPLACE(SUBSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), 0, INSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), '/')), 'www.', '') AS DOMAIN_NO_HTTP FROM links where category = 'apologetics' AND DOMAIN_NO_HTTP NOT IN (SELECT domain FROM RANDOM_LINK_DOMAIN_EXCEPTIONS) order by DOMAIN_NO_HTTP");
 $results = $db->query("SELECT DISTINCT REPLACE(SUBSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), 0, INSTR(SUBSTR(url, INSTR(url, '//') + 2, LENGTH(url)), '/')), 'www.', '') AS DOMAIN_NO_HTTP FROM links where category = 'apologetics' AND DOMAIN_NO_HTTP NOT IN (SELECT domain FROM RANDOM_LINK_DOMAIN_EXCEPTIONS) order by DOMAIN_NO_HTTP");

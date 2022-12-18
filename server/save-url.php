@@ -9,7 +9,7 @@ if ( isset($_GET["title"])) {
 } else {
     $title = "Unknown";
 }
-$db = new SQLite3('links.sqlite');
+$db = new SQLite3('db/links.sqlite');
 $results = $db->query('select column_cd, column_tx from categories');
 $categories = array();
 while ($row = $results->fetchArray()) {
@@ -28,7 +28,7 @@ $db->close();
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script>
 function getUrlTitle() {
-	$.post( "/links/get-page-title.php", { url: document.getElementById("url").value })
+	$.post( "/links-app/server/get-page-title.php", { url: document.getElementById("url").value })
 		.done(function( data ) {
 			$("#title").val(data);
 		});
@@ -45,7 +45,7 @@ function getUrlTitle() {
   <h2>Save URL</h2>
   <div class="row">
   <div class="col-md-12 well">
-  <form class="form-horizontal" role="form" method="post" action="/links/send_page.php">
+  <form class="form-horizontal" role="form" method="post" action="/links-app/server/send_page.php">
     <div class="form-group">
       <label class="control-label col-sm-2" for="url">URL:</label>
       <div class="col-sm-10">

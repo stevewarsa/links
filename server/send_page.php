@@ -1,6 +1,6 @@
 <?php
 try {
-	error_log('Entering /links/send_page.php...');
+	error_log('Entering /links-app/server/send_page.php...');
 	if ( isset($_POST["url"])) {
 		$url = $_POST["url"];
 	} else {
@@ -17,7 +17,7 @@ try {
 		$addlcomments = "";
 	}
 	error_log('Creating SQLite database connection...');
-	$db = new SQLite3('links.sqlite');
+	$db = new SQLite3('db/links.sqlite');
 	error_log('SQLite database connection created');
 	if ( isset($_POST["new_cat_cd"]) && $_POST["new_cat_cd"] != null && $_POST["new_cat_cd"] != "" && isset($_POST["new_cat_tx"]) && $_POST["new_cat_tx"] != null && $_POST["new_cat_tx"] != "") {
 		$newCategoryCd = $_POST["new_cat_cd"];

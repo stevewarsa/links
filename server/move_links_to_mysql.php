@@ -5,7 +5,7 @@ include_once('./Link.php');
 
 include_once('./Passage.php');
 
-$db = new SQLite3('links.sqlite');
+$db = new SQLite3('db/links.sqlite');
 $mysqldb = getConnection();
 
 
