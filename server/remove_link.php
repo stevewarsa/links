@@ -2,7 +2,6 @@
 error_log('Entering /links-app/server/remove_link.php...');
 $inputJSON = file_get_contents('php://input');
 error_log('[remove_link.php] Here is the incoming data: ' . $inputJSON);
-$incomingData = json_decode( $inputJSON );
 $succeededStr = "FALSE";
 try {
 	error_log('[remove_link.php] Creating SQLite database connection...');
@@ -12,11 +11,8 @@ try {
 	$insertSql = "INSERT INTO random_link_domain_exceptions (domain) VALUES (:url)";
 	$statement = $db->prepare($insertSql);
 	error_log('[remove_link.php] binding values...');
-	$doubleSlashPos = strrpos($incomingData, "://");
-	$hostOnly = substr($incomingData, $doubleSlashPos + 3);
-	error_log('[remove_link.php] $doubleSlashPos=' . $doubleSlashPos . ', $hostOnly=' . $hostOnly);
-	$statement->bindValue(':url', $hostOnly);
-	error_log('[remove_link.php] executing statement ' . $insertSql . ' with value ' . $hostOnly . '...');
+	$statement->bindValue(':url', $inputJSON);
+	error_log('[remove_link.php] executing statement ' . $insertSql . ' with value ' . $inputJSON . '...');
 
 	$succeeded = $statement->execute();
 	$succeededStr = $succeeded == TRUE ? "TRUE" : "FALSE";
