@@ -91,7 +91,7 @@ function randomlink() {
     console.log('Here is the url that was opened: ' + randomlinks[currIndex]);
     window.open(randomlinks[currIndex], "_blank");
     currIndex += 1;
-    if (currIndex == randomlinks.length) {
+    if (currIndex === randomlinks.length) {
         currIndex = 0;
     }
 }
@@ -141,7 +141,7 @@ function removeLink(link) {
         data: JSON.stringify(link),
         success: function(data) {
 			console.log("In Success function " + data);
-			if (data == "\"TRUE\"") {
+			if (data === "\"TRUE\"") {
 				// update was successful, so remove link from our list
 				/*var newLinkList = [];
 				for (var i = 0; i < linksOriginalOrder.length; i++) {

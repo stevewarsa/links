@@ -5,4 +5,5 @@ export interface Link {
     sent: string;
     title: string;
     url: string;
+    id: number;
 }

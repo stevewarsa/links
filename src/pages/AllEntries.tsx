@@ -4,10 +4,11 @@ import {useEffect, useState} from "react";
 import {stateActions} from "../store";
 import linkService from "../services/LinkService";
 import SpinnerTimer from "../components/SpinnerTimer";
-import {Card, Col, Container, Form, Pagination, Row} from "react-bootstrap";
+import {Alert, Button, Card, Col, Container, Form, Modal, Pagination, Row} from "react-bootstrap";
 import {Link} from "../model/link";
 import {Category} from "../model/category";
 import {AppState} from "../model/AppState";
+import {UpdateLinkRequest} from "../model/update-link-request";
 
 const recsPerPage = 5;
 
@@ -24,6 +25,10 @@ const AllEntries = () => {
     const [selectedCat, setSelectedCat] = useState<string>("");
     const [sentVal, setSentVal] = useState("All");
     const [searchText, setSearchText] = useState("");
+    const [showEditLink, setShowEditLink] = useState(false);
+    const [linkToEdit, setLinkToEdit] = useState<Link>(null);
+    const [linkNewCat, setLinkNewCat] = useState<Category>(null);
+    const [showAlert, setShowAlert] = useState({visible: false, success: true, headerText: "", bodyText: ""});
 
     useEffect(() => {
         (async () => {
@@ -82,8 +87,7 @@ const AllEntries = () => {
         if (search !== "") {
             console.log("doFilter - search string is " + search);
             locFilteredLinks = locFilteredLinks.filter(link => {
-                const matches = link.title && link.title.toUpperCase().includes(search.toUpperCase());
-                return matches;
+                return link.title && link.title.toUpperCase().includes(search.toUpperCase());
             });
         }
         const numPagesRounded = Math.round(locFilteredLinks.length / recsPerPage);
@@ -124,12 +128,106 @@ const AllEntries = () => {
         doFilter(selectedCat, sentVal, locSearchText);
     };
 
+    const handleRandomLink = () => {
+        let randomIndex: number = Math.floor(Math.random() * (filteredLinks.length));
+        window.open(filteredLinks[randomIndex].url, "_blank");
+    };
+
+    const handleCancel = () => {
+        setShowEditLink(false);
+    };
+
+    const handleSubmitUpdateLink = async () => {
+        setShowEditLink(false);
+        setBusy({state: true, message: "Updating link..."});
+        const updateLinkRequest: UpdateLinkRequest = new UpdateLinkRequest();
+        updateLinkRequest.link = linkToEdit;
+        updateLinkRequest.hasNewCat = linkNewCat != null;
+        updateLinkRequest.newCatCd = linkNewCat?.categoryCd;
+        updateLinkRequest.newCatTx = linkNewCat?.categoryTx;
+        linkService.updateLink(updateLinkRequest).then(resp => {
+            if (resp.data === "TRUE") {
+                setShowAlert(prev => {
+                    return {...prev, success: true, visible: true, headerText: "Updated link!", bodyText: "Link " + linkToEdit.id + " successfully!"}
+                });
+                const newLinks = links.map(element => element.id === linkToEdit.id ? linkToEdit : element);
+                dispatch(stateActions.setLinks(newLinks));
+                setFilteredLinks(prev => filteredLinks.map(element => element.id === linkToEdit.id ? linkToEdit : element));
+                if (updateLinkRequest.hasNewCat) {
+                    dispatch(stateActions.setCategories([...categories, linkNewCat]));
+                }
+            } else {
+                setShowAlert(prev => {
+                    return {...prev, success: false, visible: true, headerText: "Link Not Updated!", bodyText: "Unable to update link " + linkToEdit.id + " - check logs"}
+                });
+            }
+            setBusy({state: false, message: ""});
+        });
+    };
+
+    const handleEditLink = (link: Link) => {
+        setLinkToEdit({...link});
+        setShowEditLink(true);
+    };
+
+    const handleEditLinkCatChange = (evt: any) => {
+        setLinkToEdit(prev => {
+            return {...prev, category: evt.target.value};
+        });
+    };
+
+    const handleUrlChange = (evt: any) => {
+        setLinkToEdit(prev => {
+            return {...prev, url: evt.target.value.trim()};
+        });
+    };
+
+    const handleTitleChange = (evt: any) => {
+        setLinkToEdit(prev => {
+            return {...prev, title: evt.target.value.trim()};
+        });
+    };
+
+    const handleAddlCommentsChange = (evt: any) => {
+        setLinkToEdit(prev => {
+            return {...prev, addlcomments: evt.target.value.trim()};
+        });
+    };
+
+    const handleNewCatCdChange = (evt: any) => {
+        setLinkToEdit(prev => {
+            return {...prev, category: evt.target.value.trim()};
+        });
+        setLinkNewCat(prev => {
+            if (prev === null) {
+                return {categoryCd: evt.target.value.trim(), categoryTx: evt.target.value.trim()};
+            } else {
+                return {...prev, categoryCd: evt.target.value.trim()};
+            }
+        });
+    };
+
+    const handleNewCatTxChange = (evt: any) => {
+        setLinkNewCat(prev => {
+            // assume the user will edit the code first and by the time we get here prev will not be null
+            return {...prev, categoryTx: evt.target.value.trim()};
+        });
+    };
+
     if (busy.state) {
         return <SpinnerTimer message={busy.message} />;
     } else {
         if (currPageLinks && categories && categories.length > 0) {
             return (
                 <Container className="mt-3">
+                    {showAlert.visible &&
+                        <Alert variant={showAlert.success ? "success" : "danger"} onClose={() => setShowAlert(prev => {
+                            return {...prev, visible: false}
+                        })} dismissible>
+                            <Alert.Heading>{showAlert.headerText}</Alert.Heading>
+                            <p>{showAlert.bodyText}</p>
+                        </Alert>
+                    }
                     {currPageLinks.length > 0 &&
                         <Row className="text-center mb-3">
                             <Col>{currPageStartIndex + 1}-{currPageStartIndex + currPageLinks.length} of {filteredLinks.length}</Col>
@@ -146,12 +244,19 @@ const AllEntries = () => {
                         </Col>
                         {selectedCat && "apologetics" === selectedCat &&
                         <Col>
-                            <Form.Check checked={sentVal == "All"} onChange={(evt) => handleSent(evt, "All")} inline label="All" name="sent" type="radio" id="All" />
-                            <Form.Check checked={sentVal == "Y"} onChange={(evt) => handleSent(evt, "Y")} inline label="Y" name="sent" type="radio" id="Y" />
-                            <Form.Check checked={sentVal == "N"} onChange={(evt) => handleSent(evt, "N")} inline label="N" name="sent" type="radio" id="N" />
+                            <Form.Check checked={sentVal === "All"} onChange={(evt) => handleSent(evt, "All")} inline label="All" name="sent" type="radio" id="All" />
+                            <Form.Check checked={sentVal === "Y"} onChange={(evt) => handleSent(evt, "Y")} inline label="Y" name="sent" type="radio" id="Y" />
+                            <Form.Check checked={sentVal === "N"} onChange={(evt) => handleSent(evt, "N")} inline label="N" name="sent" type="radio" id="N" />
                         </Col>
                         }
                     </Row>
+                    {selectedCat && "apologetics" === selectedCat &&
+                        <Row className="mb-3">
+                            <Col>
+                                <Button onClick={handleRandomLink} size="lg" variant="primary">Random Link</Button>
+                            </Col>
+                        </Row>
+                    }
                     {currPageLinks.length > 0 &&
                         <Row className="text-center mb-3">
                             <Col>
@@ -185,10 +290,11 @@ const AllEntries = () => {
                             <Card.Body>
                                 <Card.Title>{l.title}</Card.Title>
                                 <Card.Text>
-                                    <a href={l.url} target="_blank">{l.url}</a><br/>
+                                    <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a><br/>
                                     Date/Time Accessed: {l.date_time_link_saved}<br/>
                                     Addl Comments: {l.addlcomments}
                                 </Card.Text>
+                                <Button onClick={() => handleEditLink(l)} variant="outline-primary"><i className="fa fa-edit"></i> Edit</Button>
                             </Card.Body>
                         </Card>
                     ))}
@@ -204,6 +310,70 @@ const AllEntries = () => {
                                 </Pagination>
                             </Col>
                         </Row>
+                    }
+                    {linkToEdit != null &&
+                        <Modal show={showEditLink} onHide={handleCancel}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Edit Link</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Row>
+                                    <Col>URL:</Col>
+                                </Row>
+                                <Row>
+                                    <Col><textarea className="w-100" value={linkToEdit?.url} rows={3} id="url"
+                                                   placeholder="URL"
+                                                   onChange={handleUrlChange}></textarea></Col>
+                                </Row>
+                                <Row>
+                                    <Col>Title:</Col>
+                                </Row>
+                                <Row>
+                                    <Col><textarea className="w-100" value={linkToEdit?.title} rows={3} id="title"
+                                                   placeholder="Title"
+                                                   onChange={handleTitleChange}></textarea></Col>
+                                </Row>
+                                <Row>
+                                    <Col>Add'l Comments:</Col>
+                                </Row>
+                                <Row>
+                                    <Col><textarea className="w-100" value={linkToEdit?.addlcomments} rows={3} id="addlcomments"
+                                                   placeholder="Additional Comments"
+                                                   onChange={handleAddlCommentsChange}></textarea></Col>
+                                </Row>
+                                <Row>
+                                    <Col>Category:</Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <Form.Select value={linkToEdit.category} aria-label="Edit Link Category Selection" size="sm"
+                                                     onChange={handleEditLinkCatChange}>
+                                            {categories?.map(category => (
+                                                <option key={category.categoryCd}
+                                                        value={category.categoryCd}>{category.categoryTx}</option>
+                                            ))}
+                                        </Form.Select>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>New Category:</Col>
+                                </Row>
+                                <Row>
+                                    <Col><Form.Control type="text" id="newcatcd"
+                                                              placeholder="New Category Code"
+                                                              onChange={handleNewCatCdChange}/></Col>
+                                </Row>
+                                <Row>
+                                    <Col><Form.Control type="text" id="newcattx"
+                                                              placeholder="New Category Text"
+                                                              onChange={handleNewCatTxChange}/></Col>
+                                </Row>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="primary" onClick={handleSubmitUpdateLink}>Submit</Button>
+                                <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+                            </Modal.Footer>
+                        </Modal>
                     }
                 </Container>
             );

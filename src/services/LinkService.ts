@@ -1,4 +1,5 @@
 import axios from "axios";
+import {UpdateLinkRequest} from "../model/update-link-request";
 
 class LinkService {
     public getLinks() {
@@ -12,6 +13,9 @@ class LinkService {
     }
     public deleteDomain(domain: string) {
         return axios.post<string>("/links-app/server/remove_link.php", domain);
+    }
+    public updateLink(updateLinkRequest: UpdateLinkRequest) {
+        return axios.post<string>("/links-app/server/update_link.php", updateLinkRequest);
     }
 }
 

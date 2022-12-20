@@ -15,7 +15,7 @@ try {
 	error_log('[remove_link.php] executing statement ' . $insertSql . ' with value ' . $inputJSON . '...');
 
 	$succeeded = $statement->execute();
-	$succeededStr = $succeeded == TRUE ? "TRUE" : "FALSE";
+	$succeededStr = $succeeded ? "TRUE" : "FALSE";
 	error_log('[remove_link.php] closing statement... Did the statement succeed? ' . $succeededStr);
 	$statement->close();
 
@@ -29,4 +29,4 @@ try {
 }
 
 print_r(json_encode($succeededStr));
-?>
+
