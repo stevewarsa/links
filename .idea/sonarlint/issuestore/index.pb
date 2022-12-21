@@ -21,9 +21,6 @@ I
 server/get_categories.php,c\1\c1c0f47896bc3aa788beb60e30e8bd940171ebcf
 I
 server/show_all_links.php,f\e\fe7c0c9ff530c264194ff73f1e8ccd27a4b6216a
-:
-
-.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 P
  server/get_domain_exceptions.php,4\b\4bab6de2278cd183dc294e1eea9684c903607f90
 ;

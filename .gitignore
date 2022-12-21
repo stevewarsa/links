@@ -25,3 +25,4 @@ yarn-error.log*
 /.idea/
 /.idea/sonarlint/issuestore/
 /.idea/sonarlint/issuestore/index.pb
+/send_weekly_apologetics_email.py
