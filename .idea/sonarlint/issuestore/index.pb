@@ -30,3 +30,17 @@ I
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+P
+ server/get_domain_exceptions.php,4\b\4bab6de2278cd183dc294e1eea9684c903607f90
+;
+src/App.tsx,8\3\835da56f32df714aaed6285a5b7fc3a7807851e4
+I
+src/components/TopNav.tsx,6\0\607ec027a37862d067888297e0b316b9102c8e4d
+=
+tsconfig.json,6\1\61ebb9fd6e8cf9082658121d5d81e297791dacd0
+D
+server/send_page.php,7\4\74957f719f83079e0faf0338310edd2f692aa661
+C
+server/save-url.php,6\7\6707651c737a24e417e15b956ee55fa879d76413
+P
+ server/random_christian_link.php,d\b\dbafecea0ffde95f603448d6e78dce1606a176f9

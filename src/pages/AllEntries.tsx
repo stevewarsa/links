@@ -60,6 +60,7 @@ const AllEntries = () => {
         // console.log("useEffect[page] - startLinkIndex: ", startLinkIndex);
         setCurrPageStartIndex(startLinkIndex);
         setCurrPageLinks(linksOnPage);
+        document.documentElement.scrollTop = 0;
     }, [page, filteredLinks]);
 
     const handleFirstPage = () => {
@@ -67,10 +68,17 @@ const AllEntries = () => {
     };
 
     const handleNextPage = () => {
+        console.log("handleNextPage - page=" + page + ", pageLen=" + pageLen);
+        if (page === pageLen) {
+            return;
+        }
         setPage(prev => prev + 1);
     };
 
     const handlePrevPage = () => {
+        if (page === 1) {
+            return;
+        }
         setPage(prev => prev - 1);
     };
 
@@ -274,9 +282,9 @@ const AllEntries = () => {
                             <Col>
                                 <Pagination size="lg" className="justify-content-center">
                                     <Pagination.First onClick={handleFirstPage} />
-                                    <Pagination.Prev onClick={handlePrevPage} />
+                                    <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
@@ -286,13 +294,14 @@ const AllEntries = () => {
                     {currPageLinks.length === 0 && selectedCat !== "apologetics" && <h3>No links for category '{selectedCat}'</h3>}
                     {currPageLinks.length > 0 && currPageLinks.map(l => (
                         <Card key={l.date_time_link_saved + l.title} border="light">
-                            <Card.Header>{categories.filter(cat => cat.categoryCd === l.category).map(cat => cat.categoryTx)}{l.category === "apologetics" ? " (Sent? " + l.sent + ")" : ""}</Card.Header>
+                            <Card.Header><strong>{categories.filter(cat => cat.categoryCd === l.category).map(cat => cat.categoryTx)}</strong>{l.category === "apologetics" ? " (Sent? " + l.sent + ")" : ""}</Card.Header>
                             <Card.Body>
                                 <Card.Title>{l.title}</Card.Title>
                                 <Card.Text>
-                                    <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a><br/>
-                                    Date/Time Accessed: {l.date_time_link_saved}<br/>
-                                    Addl Comments: {l.addlcomments}
+                                    <strong>URL:</strong> <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a><br/>
+                                    <strong>Date/Time Accessed:</strong> {l.date_time_link_saved}
+                                    {l.addlcomments !== "" && <br/>}
+                                    {l.addlcomments !== "" && "Addl Comments: " + l.addlcomments}
                                 </Card.Text>
                                 <Button onClick={() => handleEditLink(l)} variant="outline-primary"><i className="fa fa-edit"></i> Edit</Button>
                             </Card.Body>
@@ -303,9 +312,9 @@ const AllEntries = () => {
                             <Col>
                                 <Pagination size="lg" className="justify-content-center">
                                     <Pagination.First onClick={handleFirstPage} />
-                                    <Pagination.Prev onClick={handlePrevPage} />
+                                    <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
