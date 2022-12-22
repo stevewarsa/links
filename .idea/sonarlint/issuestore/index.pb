@@ -43,8 +43,6 @@ I
 server/edit-saved-url.php,3\8\38b803292e3be601a5ae7676a1cb0aa7c2862f19
 F
 server/update_link.php,f\8\f871ee54ca312eb3592a4a9b07c023b3ecdefe18
-H
-src/pages/RandomLink.tsx,3\3\33656d19552f20ed958772973698abb4f254e82a
 D
 src/helpers/utils.ts,1\3\139b57ba0c89aadd1e88c9c02a9ff4ad0591ffc8
 A
@@ -63,10 +61,12 @@ A
 src/model/link.ts,9\8\98a3793b3e089d23b063b03221a00b9d1681b8ca
 4
 .env,3\c\3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
-=
-src/index.tsx,5\a\5ab44fe33ca96299f51ad4778a73e425b92bf439
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 P
  send_weekly_apologetics_email.py,3\7\3731b3cf6c66a99e01074b91feea341fcb40c448
+8
+.env.dev,b\f\bf56cccda2cc742301e3bcfd8204c4e7506242fb
+<
+package.json,7\0\7030d0b2f71b999ff89a343de08c414af32fc93a

@@ -6,9 +6,11 @@ import linkService from "../services/LinkService";
 import SpinnerTimer from "../components/SpinnerTimer";
 import {Alert, Button, Col, Container, Form, ListGroup, Modal, Row} from "react-bootstrap";
 import {Utils} from "../helpers/utils";
+import useLinks from "../hooks/use-links";
 
 const RandomLink = () => {
     const links: Link[] = useSelector((st: AppState) => st.links);
+    const {refreshSavedLinks} = useLinks();
     const [busy, setBusy] = useState({state: false, message: ""});
     const [domains, setDomains] = useState<string[]>([]);
     const [filteredDomains, setFilteredDomains] = useState<string[]>([]);
@@ -20,6 +22,15 @@ const RandomLink = () => {
     const [indexToDelete, setIndexToDelete] = useState(-1);
     const [lastDeletedDomain, setLastDeletedDomain] = useState("N/A");
     const [searchText, setSearchText] = useState("");
+
+    useEffect(() => {
+        if (!links || links.length === 0) {
+            // if the links have not been populated yet when this
+            // component loads, call custom hook to load links
+            console.log("RandomLink.useEffect[] - Links are not loaded yet, so call custom hook to load them...");
+            refreshSavedLinks();
+        }
+    }, []);
 
     useEffect(() => {
         // go through all these links and just get a distinct list of domains

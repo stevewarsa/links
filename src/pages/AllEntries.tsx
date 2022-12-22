@@ -9,14 +9,15 @@ import {Link} from "../model/link";
 import {Category} from "../model/category";
 import {AppState} from "../model/AppState";
 import {UpdateLinkRequest} from "../model/update-link-request";
+import useLinks from "../hooks/use-links";
 
-const recsPerPage = 5;
 
 const AllEntries = () => {
     const dispatch = useDispatch();
     const links: Link[] = useSelector((st: AppState) => st.links);
     const categories: Category[] = useSelector((st: AppState) => st.categories);
     const [busy, setBusy] = useState({state: false, message: ""});
+    const {refreshSavedLinks, calculatePageLength, recsPerPage} = useLinks();
     const [page, setPage] = useState(1);
     const [pageLen, setPageLen] = useState(1);
     const [currPageLinks, setCurrPageLinks] = useState<Link[]>([]);
@@ -31,8 +32,21 @@ const AllEntries = () => {
     const [showAlert, setShowAlert] = useState({visible: false, success: true, headerText: "", bodyText: ""});
 
     useEffect(() => {
-        refreshSavedLinks();
+        // when this component initially loads, get the links if not already loaded
+        if (!links || links.length === 0) {
+            console.log("AllEntries.useEffect[dispatch] - Links are not loaded yet, so call custom hook to load them...");
+            handleRefreshSavedLinks();
+        }
     }, [dispatch]);
+
+    useEffect(() => {
+        if (!links) {
+            return;
+        }
+        // When the links from the store get updated, this function will fire
+        setPage(1);
+        setFilteredLinks(links);
+    }, [links]);
 
     useEffect(() => {
         if (!filteredLinks) {
@@ -44,27 +58,19 @@ const AllEntries = () => {
         for (let i = startLinkIndex; i < (startLinkIndex + recsPerPage) && i < filteredLinks.length; i++) {
             linksOnPage.push(filteredLinks[i]);
         }
-        // console.log("useEffect[page] - page: ", page);
-        // console.log("useEffect[page] - linksOnPage: ", linksOnPage);
-        // console.log("useEffect[page] - startLinkIndex: ", startLinkIndex);
         setCurrPageStartIndex(startLinkIndex);
         setCurrPageLinks(linksOnPage);
         document.documentElement.scrollTop = 0;
     }, [page, filteredLinks]);
 
-    const refreshSavedLinks = () => {
-        (async () => {
-            setBusy({state: true, message: "Loading links from DB..."});
-            const locLinksData: any = await linkService.getLinks();
-            dispatch(stateActions.setLinks(locLinksData.data));
-            const locCategoriesData: any = await linkService.getCategories();
-            dispatch(stateActions.setCategories(locCategoriesData.data));
-            const numPagesRounded = Math.round(locLinksData.data.length / recsPerPage);
-            setPageLen(numPagesRounded + 1);
-            setPage(1);
-            setFilteredLinks(locLinksData.data);
+    const handleRefreshSavedLinks = () => {
+        setBusy({state: true, message: "Loading links from DB..."});
+        // the result of this call will be that the store will be updated with all links and categories
+        // note - this is a call to a custom hook
+        console.log("AllEntries.handleRefreshSavedLinks - request to load links, so call custom hook to load them...");
+        refreshSavedLinks().then(() => {
             setBusy({state: false, message: ""});
-        })();
+        });
     };
 
     const handleFirstPage = () => {
@@ -102,8 +108,7 @@ const AllEntries = () => {
                 return link.title && link.title.toUpperCase().includes(search.toUpperCase());
             });
         }
-        const numPagesRounded = Math.round(locFilteredLinks.length / recsPerPage);
-        setPageLen(numPagesRounded + 1);
+        setPageLen(calculatePageLength(locFilteredLinks));
         setPage(1);
         setFilteredLinks(locFilteredLinks);
     }
@@ -243,7 +248,7 @@ const AllEntries = () => {
     };
 
     const handleRefresh = () => {
-        refreshSavedLinks();
+        handleRefreshSavedLinks();
     };
 
     if (busy.state) {
