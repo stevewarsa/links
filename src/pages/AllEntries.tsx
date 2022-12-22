@@ -31,18 +31,7 @@ const AllEntries = () => {
     const [showAlert, setShowAlert] = useState({visible: false, success: true, headerText: "", bodyText: ""});
 
     useEffect(() => {
-        (async () => {
-            setBusy({state: true, message: "Loading links from DB..."});
-            const locLinksData: any = await linkService.getLinks();
-            dispatch(stateActions.setLinks(locLinksData.data));
-            const locCategoriesData: any = await linkService.getCategories();
-            dispatch(stateActions.setCategories(locCategoriesData.data));
-            const numPagesRounded = Math.round(locLinksData.data.length / recsPerPage);
-            setPageLen(numPagesRounded + 1);
-            setPage(1);
-            setFilteredLinks(locLinksData.data);
-            setBusy({state: false, message: ""});
-        })();
+        refreshSavedLinks();
     }, [dispatch]);
 
     useEffect(() => {
@@ -62,6 +51,21 @@ const AllEntries = () => {
         setCurrPageLinks(linksOnPage);
         document.documentElement.scrollTop = 0;
     }, [page, filteredLinks]);
+
+    const refreshSavedLinks = () => {
+        (async () => {
+            setBusy({state: true, message: "Loading links from DB..."});
+            const locLinksData: any = await linkService.getLinks();
+            dispatch(stateActions.setLinks(locLinksData.data));
+            const locCategoriesData: any = await linkService.getCategories();
+            dispatch(stateActions.setCategories(locCategoriesData.data));
+            const numPagesRounded = Math.round(locLinksData.data.length / recsPerPage);
+            setPageLen(numPagesRounded + 1);
+            setPage(1);
+            setFilteredLinks(locLinksData.data);
+            setBusy({state: false, message: ""});
+        })();
+    };
 
     const handleFirstPage = () => {
         setPage(1);
@@ -119,15 +123,31 @@ const AllEntries = () => {
         }
     };
 
-    const handleSent = (evt: any, radioVal: string) => {
-        console.log("handleSent - here's the radioVal: ", radioVal);
+    const handleSent = (evt: any, cbkVal: string) => {
+        console.log("handleSent - here's the cbkVal: " + cbkVal + ", here's the current value of sent: " + sentVal);
         console.log("handleSent - here's the event: ", evt);
         const checked: boolean = evt.target.checked;
+        let newSentVal: string = sentVal;
         if (checked) {
-            setSentVal(radioVal);
-            console.log("handleSent - calling doFilter(" + selectedCat + ", " + radioVal + ")");
-            doFilter(selectedCat, radioVal, searchText);
+            // if only one of the checkboxes was checked and the incoming one is now checked,
+            // then all recs should be displayed
+            if (sentVal === "N" || sentVal === "Y") {
+                newSentVal = "All";
+            } else if (sentVal === "All") {
+                // 'All' means neither of the checkboxes were checked, so now we're
+                // filtering down to the newly checked box
+                newSentVal = cbkVal;
+            }
+        } else {
+            // if only one of the checkboxes was checked and the incoming one is now checked,
+            // then all recs should be displayed
+            if (sentVal === "N" || sentVal === "Y") {
+                newSentVal = "All";
+            }
         }
+        setSentVal(newSentVal);
+        console.log("handleSent - calling doFilter(" + selectedCat + ", " + newSentVal + ")");
+        doFilter(selectedCat, newSentVal, searchText);
     };
 
     const handleSearchChange = (evt: any) => {
@@ -160,7 +180,7 @@ const AllEntries = () => {
                 });
                 const newLinks = links.map(element => element.id === linkToEdit.id ? linkToEdit : element);
                 dispatch(stateActions.setLinks(newLinks));
-                setFilteredLinks(prev => filteredLinks.map(element => element.id === linkToEdit.id ? linkToEdit : element));
+                setFilteredLinks(prev => prev.map(element => element.id === linkToEdit.id ? linkToEdit : element));
                 if (updateLinkRequest.hasNewCat) {
                     dispatch(stateActions.setCategories([...categories, linkNewCat]));
                 }
@@ -222,6 +242,10 @@ const AllEntries = () => {
         });
     };
 
+    const handleRefresh = () => {
+        refreshSavedLinks();
+    };
+
     if (busy.state) {
         return <SpinnerTimer message={busy.message} />;
     } else {
@@ -238,7 +262,8 @@ const AllEntries = () => {
                     }
                     {currPageLinks.length > 0 &&
                         <Row className="text-center mb-3">
-                            <Col>{currPageStartIndex + 1}-{currPageStartIndex + currPageLinks.length} of {filteredLinks.length}</Col>
+                            <div className="col-10">{currPageStartIndex + 1}-{currPageStartIndex + currPageLinks.length} of {filteredLinks.length}</div>
+                            <div className="col-2"><Button onClick={handleRefresh} variant="outline-primary" size="sm"><i className="fa fa-refresh"></i></Button> </div>
                         </Row>
                     }
                     <Row className="text-center mb-3">
@@ -252,9 +277,9 @@ const AllEntries = () => {
                         </Col>
                         {selectedCat && "apologetics" === selectedCat &&
                         <Col>
-                            <Form.Check checked={sentVal === "All"} onChange={(evt) => handleSent(evt, "All")} inline label="All" name="sent" type="radio" id="All" />
-                            <Form.Check checked={sentVal === "Y"} onChange={(evt) => handleSent(evt, "Y")} inline label="Y" name="sent" type="radio" id="Y" />
-                            <Form.Check checked={sentVal === "N"} onChange={(evt) => handleSent(evt, "N")} inline label="N" name="sent" type="radio" id="N" />
+                            <Form.Check checked={sentVal === "Y"} onChange={(evt) => handleSent(evt, "Y")} inline label="Y" name="sent_y" type="checkbox" id="Y" />
+                            <Form.Check checked={sentVal === "N"} onChange={(evt) => handleSent(evt, "N")} inline label="N" name="sent_n" type="checkbox" id="N" />
+                            <span style={{fontSize: "10px"}}>(sent)</span>
                         </Col>
                         }
                     </Row>
