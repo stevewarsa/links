@@ -37,7 +37,7 @@ const AllEntries = () => {
             console.log("AllEntries.useEffect[dispatch] - Links are not loaded yet, so call custom hook to load them...");
             handleRefreshSavedLinks();
         }
-    }, [dispatch]);
+    }, []);
 
     useEffect(() => {
         if (!links) {
@@ -93,7 +93,7 @@ const AllEntries = () => {
     };
 
     const handleLastPage = () => {
-        setPage(pageLen - 1);
+        setPage(pageLen);
     };
 
     const doFilter = (cat: string, sent: string, search: string) => {
@@ -314,7 +314,7 @@ const AllEntries = () => {
                                     <Pagination.First onClick={handleFirstPage} />
                                     <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next disabled={page === (pageLen - 1)} onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
@@ -344,7 +344,7 @@ const AllEntries = () => {
                                     <Pagination.First onClick={handleFirstPage} />
                                     <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next disabled={page === (pageLen - 1)} onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
