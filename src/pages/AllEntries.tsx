@@ -314,7 +314,7 @@ const AllEntries = () => {
                                     <Pagination.First onClick={handleFirstPage} />
                                     <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === (pageLen - 1)} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
@@ -344,7 +344,7 @@ const AllEntries = () => {
                                     <Pagination.First onClick={handleFirstPage} />
                                     <Pagination.Prev disabled={page === 1} onClick={handlePrevPage} />
                                     <Pagination.Item disabled>{page}</Pagination.Item>
-                                    <Pagination.Next disabled={page === pageLen} onClick={handleNextPage} />
+                                    <Pagination.Next disabled={page === (pageLen - 1)} onClick={handleNextPage} />
                                     <Pagination.Last onClick={handleLastPage} />
                                 </Pagination>
                             </Col>
