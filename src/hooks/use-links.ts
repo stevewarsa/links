@@ -14,8 +14,7 @@ const useLinks = () => {
     };
 
     const calculatePageLength = (links: any[]) => {
-        const numPagesRounded = Math.floor(links.length / recsPerPage);
-        return numPagesRounded + 1;
+        return links.length < recsPerPage ? 1 : Math.ceil(links.length / recsPerPage);
     };
 
     return {
