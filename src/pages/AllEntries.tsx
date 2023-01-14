@@ -174,7 +174,9 @@ const AllEntries = () => {
         setShowEditLink(false);
         setBusy({state: true, message: "Updating link..."});
         const updateLinkRequest: UpdateLinkRequest = new UpdateLinkRequest();
-        updateLinkRequest.link = linkToEdit;
+        const locLink = {...linkToEdit};
+        locLink.title = locLink.title.trim();
+        updateLinkRequest.link = locLink;
         updateLinkRequest.hasNewCat = linkNewCat != null;
         updateLinkRequest.newCatCd = linkNewCat?.categoryCd;
         updateLinkRequest.newCatTx = linkNewCat?.categoryTx;
@@ -217,7 +219,7 @@ const AllEntries = () => {
 
     const handleTitleChange = (evt: any) => {
         setLinkToEdit(prev => {
-            return {...prev, title: evt.target.value.trim()};
+            return {...prev, title: evt.target.value};
         });
     };
 
