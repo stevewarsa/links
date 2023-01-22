@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 from datetime import datetime
+import re
 
 PARSER = 'html.parser'
 TAG_ = "tag/*/"
@@ -9,11 +10,32 @@ TAG_ = "tag/*/"
 directory = 'c:/backup/pictures/memes/auto-download-freerepublic'
 baseurl = "https://www.freerepublic.com/"
 date_string = datetime.now().strftime("%m-%d-%Y")
+date_string_free_repub = datetime.now().strftime("%m/%d/%y")
+# Remove leading zeroes from month and day
+dateParts = date_string_free_repub.split("/")
+month = dateParts[0]
+if month.startswith("0"):
+    month = month.replace("0", "")
+day = dateParts[1]
+if day.startswith("0"):
+    day = day.replace("0", "")
+date_string_free_repub = month + "/" + day + "/" + dateParts[2]
 response = requests.get(baseurl)
 soup = BeautifulSoup(response.text, PARSER)
 for i in range(500):
     print(i)
     if "The Briefing Room ^" in response.text and "pookie18" in response.text:
+        # Regular expression pattern to match the desired line of text
+        pattern = '<div class="attrib">.*gopbriefingroom\.com/index\.php/topic.*?</a> \| (.*?) \| pookie18</div>'
+        # Search for the pattern in the text
+        match = re.search(pattern, response.text)
+        # Extract the date if a match is found
+        if match:
+            freeRepDateStr = match.group(1)
+            if date_string_free_repub != freeRepDateStr:
+                print("Found matching post based on title and author, but the date '" + freeRepDateStr + "' does not match today '" + date_string_free_repub + "', exiting")
+                break
+        print(response.text)
         # now go to the link specified
         a_tags = soup.find_all('a', href=lambda x: x and 'gopbriefingroom.com/index.php/topic' in x, text='The Briefing Room ^')
         link = None
