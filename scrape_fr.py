@@ -35,7 +35,7 @@ for i in range(500):
             if date_string_free_repub != freeRepDateStr:
                 print("Found matching post based on title and author, but the date '" + freeRepDateStr + "' does not match today '" + date_string_free_repub + "', exiting")
                 break
-        print(response.text)
+        #print(response.text)
         # now go to the link specified
         a_tags = soup.find_all('a', href=lambda x: x and 'gopbriefingroom.com/index.php/topic' in x, text='The Briefing Room ^')
         link = None
