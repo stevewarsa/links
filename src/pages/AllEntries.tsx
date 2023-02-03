@@ -297,7 +297,7 @@ const AllEntries = () => {
                             </Col>
                         </Row>
                     }
-                    {currPageLinks.length > 0 &&
+                    {links.length > 0 &&
                         <Row className="text-center mb-3">
                             <Col>
                                 <Form.Control
@@ -323,7 +323,8 @@ const AllEntries = () => {
                         </Row>
                     }
                     {currPageLinks.length === 0 && selectedCat === "apologetics" && sentVal === "N" && <h3>No links unsent for category Apologetics</h3>}
-                    {currPageLinks.length === 0 && selectedCat !== "apologetics" && <h3>No links for category '{selectedCat}'</h3>}
+                    {currPageLinks.length === 0 && selectedCat !== "apologetics" && selectedCat !== "" && <h3>No links for category '{selectedCat}'</h3>}
+                    {currPageLinks.length === 0 && selectedCat === "" && <h3>No links match search criteria '{searchText}'</h3>}
                     {currPageLinks.length > 0 && currPageLinks.map(l => (
                         <Card key={l.date_time_link_saved + l.title} border="light">
                             <Card.Header><strong>{categories.filter(cat => cat.categoryCd === l.category).map(cat => cat.categoryTx)}</strong>{l.category === "apologetics" ? " (Sent? " + l.sent + ")" : ""}</Card.Header>
