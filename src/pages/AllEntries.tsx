@@ -45,6 +45,7 @@ const AllEntries = () => {
         }
         // When the links from the store get updated, this function will fire
         setPage(1);
+        setPageLen(calculatePageLength(links));
         setFilteredLinks(links);
     }, [links]);
 
