@@ -10,6 +10,7 @@ import {Category} from "../model/category";
 import {AppState} from "../model/AppState";
 import {UpdateLinkRequest} from "../model/update-link-request";
 import useLinks from "../hooks/use-links";
+import {isAfter, parse, subYears} from "date-fns";
 
 
 const AllEntries = () => {
@@ -163,8 +164,36 @@ const AllEntries = () => {
     };
 
     const handleRandomLink = () => {
-        let randomIndex: number = Math.floor(Math.random() * (filteredLinks.length));
-        window.open(filteredLinks[randomIndex].url, "_blank");
+        if (selectedCat === "apologetics" && sentVal === "Y") {
+            // sort the filtered links in descending order by id so that the most recently sent link is sorted nearer to 0
+            const sortedLinks = filteredLinks.sort((a, b) => b.id - a.id);
+            let iterations = 0;
+            while (true) {
+                let randomIndex: number = Math.floor(Math.random() * (filteredLinks.length));
+                if (++iterations >= filteredLinks.length) {
+                    window.open(filteredLinks[randomIndex].url, "_blank");
+                    console.log("Iterations=" + iterations + ", stop looping and simply launch the current link ('apologetics', sent=Y): ", filteredLinks[randomIndex]);
+                    break;
+                }
+                // check to see if this link was sent out recently
+                const twoYearsAgo = subYears(new Date(), 2); // Get the date that was 2 years ago
+                const matchingLinks = sortedLinks.filter(lnk => lnk.url.replace("https", "").replace("http", "") === filteredLinks[randomIndex].url.replace("https", "").replace("http", ""));
+                console.log("Found the following matching links: ", matchingLinks);
+                const tooRecent = matchingLinks
+                    .map(lnk => parse(lnk.date_time_link_saved, "yyyy-MM-dd HH:mm:ss", new Date()))
+                    .map(dt => isAfter(dt, twoYearsAgo))
+                    .some(moreRecentThanTwoYears => moreRecentThanTwoYears);
+                if (!tooRecent) {
+                    console.log("Launching the link ('apologetics', sent=Y): ", filteredLinks[randomIndex]);
+                    window.open(filteredLinks[randomIndex].url, "_blank");
+                    break;
+                }
+            }
+        } else {
+            let randomIndex: number = Math.floor(Math.random() * (filteredLinks.length));
+            console.log("Launching non-apologetics, non-sent link: ", filteredLinks[randomIndex]);
+            window.open(filteredLinks[randomIndex].url, "_blank");
+        }
     };
 
     const handleCancel = () => {
