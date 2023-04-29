@@ -359,7 +359,13 @@ const AllEntries = () => {
                         <Card key={l.date_time_link_saved + l.title} border="light">
                             <Card.Header><strong>{categories.filter(cat => cat.categoryCd === l.category).map(cat => cat.categoryTx)}</strong>{l.category === "apologetics" ? " (Sent? " + l.sent + ")" : ""}</Card.Header>
                             <Card.Body>
-                                <Card.Title>{l.title}</Card.Title>
+                                <Card.Title>{l.title.replace(/â/g, '"').replace(/â/g, '"').replace(/â/g, "'").replace(/â/g, "—").replace(/â/g, "—").replace(/â¦/g, "…").replace(/entrÃ©e/g, "entrée").replace(/â/g, "‘").replace(/Ã¢ÂÂ|Ã¢ÂÂ/g, (match) => {
+                                    if (match === "Ã¢ÂÂ") {
+                                        return "“";
+                                    } else {
+                                        return "”";
+                                    }
+                                }).replace(/Ã¢ÂÂ/g, "’")}</Card.Title>
                                 <Card.Text>
                                     <strong>URL:</strong> <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a><br/>
                                     <strong>Date/Time Accessed:</strong> {l.date_time_link_saved}
