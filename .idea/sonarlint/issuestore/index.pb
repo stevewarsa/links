@@ -5,16 +5,10 @@ G
 server/create_email.php,6\f\6f03d55d6ed6b5ea467b752df98a8555e36e1f36
 A
 src/setupProxy.js,c\b\cbd9e2737defe43b734c82719102006adccf8ab6
-O
-src/components/SpinnerTimer.tsx,c\4\c456f8673990c95faa237f4d4131ffeeb8d5596a
 I
 src/helpers/is-mounted.ts,e\5\e50d53bef037d6e5e288632d4720099eb542c4bb
-B
-src/store/index.ts,7\8\788f62f848ec0936ef56cb3abc11e629c69f787c
 E
 src/model/category.ts,5\6\56c17cd82d7a99746c426d210ca7ab3ab6aa86df
-E
-src/model/AppState.ts,9\9\99e0ff3b74bf4d76b5cac8e13fb00cb454a4f311
 I
 server/get-page-title.php,e\7\e7e32d40fabaa4e54fa7866a89f8bc3545724deb
 I
@@ -23,8 +17,6 @@ I
 server/show_all_links.php,f\e\fe7c0c9ff530c264194ff73f1e8ccd27a4b6216a
 P
  server/get_domain_exceptions.php,4\b\4bab6de2278cd183dc294e1eea9684c903607f90
-I
-src/components/TopNav.tsx,6\0\607ec027a37862d067888297e0b316b9102c8e4d
 D
 server/send_page.php,7\4\74957f719f83079e0faf0338310edd2f692aa661
 C
@@ -53,5 +45,16 @@ I
 .env.dev,b\f\bf56cccda2cc742301e3bcfd8204c4e7506242fb
 D
 src/helpers/utils.ts,1\3\139b57ba0c89aadd1e88c9c02a9ff4ad0591ffc8
-H
-src/pages/RandomLink.tsx,3\3\33656d19552f20ed958772973698abb4f254e82a
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+A
+public/index.html,f\4\f43ecdf8d666ee908aacce037b4cd72159e4741b
+A
+src/model/link.ts,9\8\98a3793b3e089d23b063b03221a00b9d1681b8ca
+E
+src/model/AppState.ts,9\9\99e0ff3b74bf4d76b5cac8e13fb00cb454a4f311
+<
+scrape_fr.py,2\a\2a37cd0bcbb8a3d24215ea7677e6815feff30aad
+F
+src/hooks/use-links.ts,2\a\2ad22844d6f2cdd0849b12425db6db4305d601ea

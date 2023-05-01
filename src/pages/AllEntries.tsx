@@ -365,7 +365,7 @@ const AllEntries = () => {
                                     } else {
                                         return "”";
                                     }
-                                }).replace(/Ã¢ÂÂ/g, "’")}</Card.Title>
+                                }).replace(/Ã¢ÂÂ/g, "’").replace(/Ã¢ÂÂ/g, "-")}</Card.Title>
                                 <Card.Text>
                                     <strong>URL:</strong> <a href={l.url} target="_blank" rel="noreferrer">{l.url}</a><br/>
                                     <strong>Date/Time Accessed:</strong> {l.date_time_link_saved}
