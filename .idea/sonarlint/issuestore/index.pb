@@ -54,7 +54,7 @@ A
 src/model/link.ts,9\8\98a3793b3e089d23b063b03221a00b9d1681b8ca
 E
 src/model/AppState.ts,9\9\99e0ff3b74bf4d76b5cac8e13fb00cb454a4f311
-<
-scrape_fr.py,2\a\2a37cd0bcbb8a3d24215ea7677e6815feff30aad
 F
 src/hooks/use-links.ts,2\a\2ad22844d6f2cdd0849b12425db6db4305d601ea
+=
+src/index.tsx,5\a\5ab44fe33ca96299f51ad4778a73e425b92bf439

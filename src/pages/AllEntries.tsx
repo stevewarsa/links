@@ -11,6 +11,7 @@ import {AppState} from "../model/AppState";
 import {UpdateLinkRequest} from "../model/update-link-request";
 import useLinks from "../hooks/use-links";
 import {isAfter, parse, subYears} from "date-fns";
+import {Utils} from "../helpers/utils";
 
 
 const AllEntries = () => {
@@ -46,8 +47,12 @@ const AllEntries = () => {
         }
         // When the links from the store get updated, this function will fire
         setPage(1);
-        setPageLen(calculatePageLength(links));
-        setFilteredLinks(links);
+        if (selectedCat && selectedCat.length > 0) {
+            doFilter(selectedCat, sentVal, searchText);
+        } else {
+            setPageLen(calculatePageLength(links));
+            setFilteredLinks(links);
+        }
     }, [links]);
 
     useEffect(() => {
@@ -217,7 +222,7 @@ const AllEntries = () => {
                 });
                 const newLinks = links.map(element => element.id === linkToEdit.id ? linkToEdit : element);
                 dispatch(stateActions.setLinks(newLinks));
-                setFilteredLinks(prev => prev.map(element => element.id === linkToEdit.id ? linkToEdit : element));
+                //setFilteredLinks(prev => prev.map(element => element.id === linkToEdit.id ? linkToEdit : element));
                 if (updateLinkRequest.hasNewCat) {
                     dispatch(stateActions.setCategories([...categories, linkNewCat]));
                 }
@@ -305,7 +310,7 @@ const AllEntries = () => {
                     }
                     <Row className="text-center mb-3">
                         <Col>
-                            <Form.Select aria-label="Category Selection" size="sm" onChange={handleCatChange}>
+                            <Form.Select aria-label="Category Selection" size="sm" onChange={handleCatChange} value={selectedCat}>
                                 <option value=""></option>
                                 {categories.map(category => (
                                     <option key={category.categoryCd} value={category.categoryCd}>{category.categoryTx}</option>
