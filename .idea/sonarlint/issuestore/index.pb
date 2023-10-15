@@ -58,3 +58,23 @@ F
 src/hooks/use-links.ts,2\a\2ad22844d6f2cdd0849b12425db6db4305d601ea
 =
 src/index.tsx,5\a\5ab44fe33ca96299f51ad4778a73e425b92bf439
+=
+tsconfig.json,6\1\61ebb9fd6e8cf9082658121d5d81e297791dacd0
+;
+src/App.tsx,8\3\835da56f32df714aaed6285a5b7fc3a7807851e4
+H
+src/pages/RandomLink.tsx,3\3\33656d19552f20ed958772973698abb4f254e82a
+H
+src/pages/AllEntries.tsx,e\1\e107f704183f7ecbc8ec45f5f2ad636d18fc57f0
+O
+src/components/SpinnerTimer.tsx,c\4\c456f8673990c95faa237f4d4131ffeeb8d5596a
+I
+src/components/TopNav.tsx,6\0\607ec027a37862d067888297e0b316b9102c8e4d
+B
+src/store/index.ts,7\8\788f62f848ec0936ef56cb3abc11e629c69f787c
+K
+src/services/LinkService.ts,a\c\ac8a07702428139e3c71fb747bde7865a1d9d7ea
+<
+package.json,7\0\7030d0b2f71b999ff89a343de08c414af32fc93a
+<
+scrape_fr.py,2\a\2a37cd0bcbb8a3d24215ea7677e6815feff30aad
