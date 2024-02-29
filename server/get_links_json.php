@@ -69,7 +69,7 @@ $statement->close();
 $db->close();
 
 $db = new SQLite3('../../bible-app/server/db/memory_Guest.db');
-$results = $db->query("SELECT quote_tx FROM quote");
+$results = $db->query("SELECT quote_tx FROM quote q, quote_tag qt, tag t where q.quote_id = qt.quote_id and qt.tag_id = t.tag_id and t.tag_name = 'apologetics'");
 $quotes = array();
 while ($row = $results->fetchArray()) {
     array_push($quotes, $row['quote_tx']);
@@ -78,15 +78,15 @@ shuffle($quotes);
 $db->close();
 $update = $_GET["update"];
 if ($update == "Y") {
-	error_log('Updating records to sent = Y');
-	$db = new SQLite3('db/links.sqlite');
-	$statement = $db->prepare("update links set sent = 'Y' where category = 'apologetics' and sent = 'N'");
-	$statement->execute();
-	$statement->close();
-	$db->close();
-	error_log('Updated records to sent = Y');
+    error_log('Updating records to sent = Y');
+    $db = new SQLite3('db/links.sqlite');
+    $statement = $db->prepare("update links set sent = 'Y' where category = 'apologetics' and sent = 'N'");
+    $statement->execute();
+    $statement->close();
+    $db->close();
+    error_log('Updated records to sent = Y');
 } else {
-	error_log('NOT Updating records to sent...');
+    error_log('NOT Updating records to sent...');
 }
 $arrayName = array();
 array_push($arrayName, $passage);
